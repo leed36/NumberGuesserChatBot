@@ -1,0 +1,19 @@
+{
+  "name": "numberguesserchatbot",
+  "version": "0.0.1",
+  "description": "Creating a chatbot that can guess a number from the conversationee",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/leed36/NumberGuesserChatBot.git"
+  },
+  "author": "Daniel",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/leed36/NumberGuesserChatBot/issues"
+  },
+  "homepage": "https://github.com/leed36/NumberGuesserChatBot#readme"
+}
