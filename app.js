@@ -1,8 +1,9 @@
 /*Daniel lee
 
-  Creating a chat bot using node.js for the first time
+  VERSION 1 : Creating a chat bot using node.js for the first time
   Description: The bot will guess for the user's number between 1 to 10
   and will have some personality to it.
+  VERSION 2 : Has another bot that is a "friend" that wants to go get food.
   */
 
 var restify = require('restify');
@@ -13,6 +14,24 @@ var reprompt = false;
 var secondAct = false;
 //holds the memory from the bot
 var inMemoryStorage = new builder.MemoryBotStorage();
+
+var restaurants = {
+   "McBonald's" : {
+      Name : "McBonald's",
+      Description : "fast food restaurant with burgers.",
+      PriceRange : "pretty cheap."
+   },
+   "Olive Yard" : {
+      Name : "Olive Yard",
+      Description : "nice italian restaurant.",
+      PriceRange : "mid range."
+   },
+   "Sushi world" : {
+      Name : "Sushi World",
+      Description : "conveyor belt sushi spot.",
+      PriceRange : "it can get expensive if you let loose."
+   }
+}
 
 //Setup restify server
 var server = restify.createServer();
@@ -41,19 +60,19 @@ var bot = new builder.UniversalBot(connector, [
       }
    },
    function (session, results) {
-      if (results.response === "no") {
-         session.send("Awww, I guess I messed up. ");
+      if (!results.response) {
+         session.send("Awww, I guess I messed up. Ferdinand is coming now.");
       } else {
-         session.send("Oh I actually got it. Thank you for playing! I hope you have fun with Ferdinand.");
+         session.send("Oh I actually got it. Thank you for playing! I hope you enjoy your time with Ferdinand.");
       }
-      session.send("*ChatBot leaves* *Ferdinand enters*")
-      session.send("Hello there, My name is Ferdinand and I would like to quiz your math skills.");
+      session.send("*ChatBot leaves* \n*Ferdinand enters*")
+      session.send("Hello there, My name is Ferdinand and I'm pretty hungry. Let's get food.");
       session.beginDialog('secondActivity');
    }
 
 ]).set('storage', inMemoryStorage);
 
-
+//The first phase of the bot
 bot.dialog('firstActivity', [
    function(session) {
       if (!reprompt) {
@@ -98,15 +117,33 @@ bot.dialog('help', function(session, args, next) {
    session.endDialog(msg);
 })
 
+//The second phase
 bot.dialog('secondActivity', [
-   function(session) {
-      
+   function(session){
+      builder.Prompts.choice(session, "Where do you want to eat?", restaurants);
+   },
+   function (session, results) {
+      var place = restaurants[results.response.entity];
+      session.send(place.Name + " sounds good to me. It's a " + place.Description);
+      session.send("Type 'goodbye' to finish or 'cost' to get idea of restaurants.")
    }
 ])
 .endConversationAction('endConversationAction', 'Ok, goodbye!', {
     matches: /^goodbye$/i
 })
+.beginDialogAction('costAction', 'cost', { matches: /^cost$|^price$/i })
 .beginDialogAction('helpAction', 'help2', { matches: /^help$/i });
+
+bot.dialog('cost', function(session, args, next) {
+   var msg = "";
+   var i;
+   for (i in restaurants) {
+      if (restaurants.hasOwnProperty(i)) {
+         msg += (restaurants[i].Name + " is " + restaurants[i].PriceRange + "\n");
+      }
+   }
+   session.endDialog(msg);
+})
 
 bot.dialog('help2', function(session, args, next) {
    var msg = "Umm I'll just repeat what I said.";
@@ -116,12 +153,3 @@ bot.dialog('help2', function(session, args, next) {
 function divide4(x) {
    return (x / 4);
 };
-
-function sleep(milliseconds) {
-  var start = new Date().getTime();
-  for (var i = 0; i < 1e7; i++) {
-    if ((new Date().getTime() - start) > milliseconds){
-      break;
-    }
-  }
-}
