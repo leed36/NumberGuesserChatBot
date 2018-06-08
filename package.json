@@ -18,6 +18,7 @@
   "homepage": "https://github.com/leed36/NumberGuesserChatBot#readme",
   "dependencies": {
     "botbuilder": "^3.15.0",
-    "restify": "^7.2.0"
-  }
+    "restify": "^7.2.1"
+  },
+  "devDependencies": {}
 }

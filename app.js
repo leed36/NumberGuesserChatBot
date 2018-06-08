@@ -4,6 +4,7 @@
   Description: The bot will guess for the user's number between 1 to 10
   and will have some personality to it.
   VERSION 2 : Has another bot that is a "friend" that wants to go get food.
+  TODO I plan on using other npm packages for the foods in restaurants.
   */
 
 var restify = require('restify');
@@ -72,7 +73,7 @@ var bot = new builder.UniversalBot(connector, [
 
 ]).set('storage', inMemoryStorage);
 
-//The first phase of the bot
+//The first phase of the bot which does the number guessing.
 bot.dialog('firstActivity', [
    function(session) {
       if (!reprompt) {
@@ -134,6 +135,7 @@ bot.dialog('secondActivity', [
 .beginDialogAction('costAction', 'cost', { matches: /^cost$|^price$/i })
 .beginDialogAction('helpAction', 'help2', { matches: /^help$/i });
 
+//shows the price ranges of the restaurant choices
 bot.dialog('cost', function(session, args, next) {
    var msg = "";
    var i;
